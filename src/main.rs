@@ -1,41 +1,25 @@
-use std::io;
-use rand::Rng;
-use std::cmp::Ordering;
-
+const MAX:u32 = 1000;
+// constants - use const instead of let.
+// should specify the type.
+// can be declared in any scope.
+// can only be set to a constance expression, not to result of function call or any other value
+// that can be computed at run time.
 fn main() {
-    println!("Guess the number");
+    let x=5;
+    println!("Value of x is {}", x);
+    // x = 6;  // x in immutable, cannot reassign
 
-    let secret_number = rand::thread_rng().gen_range(1, 101);
-    println!("The secret number is {}", secret_number);
+    let mut y = 56; // mutable can be changed
+    println!("Value of y is {}", y);
+    y = 12;
+    println!("Value of y is {}", y);
 
-    loop {
-        println!("Input your guess");
-        let mut guess = String::new();
-        io::stdin().read_line(&mut guess)
-            .expect("Failed to read line");
-        // references are immutable by default, here we need a mutable reference,
-        // so use `&mut guess` rather than `&guess`
-        // read_line also return a result of type io::Result ( There is a generic
-        // Result as well as specific versions for submodules as in io::Result )
-        // Result types are enumerators ( enums ). The variants are Ok, Err
-
-        //let guess: u32 = guess.trim().parse()
-        //    .expect("Enter a number!!");
-        let guess:u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-
-        println!("You guessed: {}", guess);
-
-        match guess.cmp(&secret_number) {
-            // Ordering is another enum, like Result
-            Ordering::Less => println!("Too small!!"),
-            Ordering::Equal => {
-                println!("You win!!");
-                break;
-            },
-            Ordering::Greater => println!("Too big!!"),
-        }
-    }
+    // immutable can be shadowed
+    let x = x+MAX;
+    // can change the type when shadowing [see master-guessing game]
+    // as using let, it creates another variable
+    println!("[Shadowing] The value of x is {}", x);
+    // mutable variable cannot be shadowed
+    // y = 100;  // fine, with warnings
+    // y = "felix";  // mismatched types error
 }
