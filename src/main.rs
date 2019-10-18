@@ -1,94 +1,91 @@
 fn main() {
-    let number = 3;
-
-    if number % 4 == 0 {
-        println!("number is divisible by 4");
-    } else if number % 3 == 0 {
-        println!("number is divisible by 3");
-    } else if number % 2 == 0 {
-        println!("number is divisible by 2");
+    let x = if true {
+        // y is known only inside this if -- scope of y
+        let y = 10;
+        y+10
     } else {
-        println!("number is not divisible by 4, 3, or 2");
-    }
-
-    // condition *must be* a bool
-    /*if number {
-        // wont compile
-    }*/
-
-    let number = if true {
-        number + 2  // no semi-colon!!
-    } else {
-        number
-        // "six" // <-- Error!!!, all arms should be of same type
+        0
     };
-    // when using if to assign value to an variable, each arm should evaluate
-    // to compatible data type
+    println!("{}",x);
 
-    println!("number is {}", number);
+    // ownership
+   {
+       let mut s = String::from("Hello");  // variable gets a
+       // space in heap rather than on stack as it can grow/shrink.
+       s.push_str(", World!");
+       println!("{}",s)
+   }  // rust calls the drop function for the variable at this point, the
+    // function implements how to return the memory back to OS.
 
-    let mut ctr = 0;
-    loop {
-        println!("Counter value {}", ctr);
-        ctr += 1;
-        if ctr >= 4 {
-            break;
-        }
-    }
+    let x = 5;
+    let y = x;
+    // bind 5 to x, make a copy of x and bind to y
+    // the data is stored to stack rather than heap as the size is known and
+    // does not change
 
-    ctr = 0;
-    // do operations that may fail repeatedly
-    let result = loop {
-        ctr += 1;
-        if ctr == 10 {
-            break ctr * 2;
-            // or break ctr * 2
-        }
-    };
-    println!("Result {}", result);
+    let mut x = 10;
+    let mut y = x;
+    println!("x and y {} {}", x, y);
 
-    ctr = 0;
-    while ctr != 4 {
-        println!("ctr {}", ctr);
-        ctr += 1;
-    };
-    // assignment to variable as in loop does not work here, also break does
-    // not work here. Should be like
-    ctr = 0;
-    while ctr != 4 {
-        println!("ctr wb {}", ctr);
-        ctr += 1;
-        if ctr == 2{
-            // break ctr; //  <- does not work
-            break;
-        }
-    };
+    y += 1;
+    println!("x and y {} {} after changing y", x, y);
+    // x is not affected
 
-    let a:[i32;4] = [10, 20, 12, 34];
-    for x in a.iter() {
-        println!("The value is {}",x);
-    };
+    let s1 = String::from("hello");
+    let s2 = s1;
+    /* string consist of three parts ( in Rust ) -
+        1. pointer to the data (the word "hello") in heap
+        2. length os string
+        3. capacity
+       On assigning s2 with s1, this data is copied, so the pointer for
+       both the variables point to the same location. Rust does not copy the
+       heap data.
+    */
+    // when both goes out of scope both will try to free
+    // memory ( which is a bug ), so Rust instead of copying the memory it
+    // considers s1 to be invalid. try
 
-    // range
-    for y in 1..10 {
-        println!("The value of y {}", y);
-        println!("fib({}) = {}", y, fib(y));
-    }
+    //println!("s1 {}",s1);
+
+    // this is like a shallow copy, but as the variable is invalidated, it is
+    // called *move*.
+
+    // Rust never created *deep copy* by default.
+    let s1 = String::from("Hello");
+    let s2 = s1.clone();  // this copies heap data too.
+    println!("s1 {} s2 {}", s1, s2);
+
+    let x = 5;
+    let y = x;
+    // here there is no change in deep and shallow copy, so both are valid
+    // after the copy
+
+    // if the variable have a Copy trait then the variable is still usable after
+    // assignment. We cannot annotate a type with Copy if the type or any
+    // part of it have implemented the Drop trait.
+
+    // move - copy applies to function arguments and returning as well
+    let s1=gives_ownership();
+    // the return value is *moved* to s1
+    let s2=String::from("Hello");
+    let s3=takes_and_gives_back(s2);
+    // s2 is moved to fn argument a_string, return is moved to s3
+    // as s2 is moved the following throws error
+    // println!("s2 {}",s2);
+    let x = 10;
+    makes_copy(x);  // x is only copied
+    println!("x {} valid after being used to call fn", x);
 }
 
-fn fib(pos: i32) -> i32 {
-    let mut a: i32 = 1;
-    let mut b: i32 = 1;
-    let mut c: i32 = 0;
-    let mut pos = pos;
-    if pos == 1 {
-        return a;
-    }
-    while pos > 1 {
-        c = a;
-        a = b;
-        b = c + b;
-        pos -= 1;
-    }
-    return a;
+fn gives_ownership() -> String {
+    let some_string = String::from("Hello");
+    some_string  // Note - no `;`
+}
+
+fn takes_and_gives_back(a_string: String) -> String {
+    a_string
+}
+
+fn makes_copy(nu: i32) {
+    println!("{}", nu);
 }
