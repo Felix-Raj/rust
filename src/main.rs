@@ -1,26 +1,23 @@
 fn main() {
-    // scalar and compound type
+    println!("Hello, World!");
 
-    // scalar - single value, int, float, bool, char
+    // expression - evaluates to a value
+    // statements - do not return a value
+    // let x=4 is an expression, while 4 is a statement. Statement 4 returns
+    // 4, while let x=4 returns nothing. Thus we cannot do let y = (let x = 4)
+    let y = {
+        let x= another_function(4);
+        x + 1
+    };
+    // try with let y = { let x = 3; x+1;}
+    // with the ending `;` this turns to be a statement which cannot be
+    // assigned to a variable
+    println!("y is {}", y);
+}
 
-    // also see https://doc.rust-lang.org/book/ch03-02-data-types.html#integer-overflow
-
-    let a=2.3;  // f64
-    let b: f32 = 2.3;  // f32
-    let c = 'x'; // char
-
-    // compound types - multiple values into one type
-    // tuples and arrays
-    let tup: (i32, f64, u8) = (500, 4.5, 12);
-    println!("first element in the tuple is {}", tup.0);
-    let (d, e, f) = tup;  // destructuring
-    println!("e is {}", e);
-
-    let g = [1,2,3,4,5, 4];  // in stack
-    // fixed number of elements
-    // vector type can grow or shrink
-    // homogeneous, [1,2,3,4,5, 4.6, "Felix", 'f'] not allowed
-    // with annotation - g: [i32;6] = [1,2,3,4,5,4];
-    println!("array element 0 {}", g[0]);
-    let h = [3; 4];  // 3 repeated 4 times
+fn another_function(x: i32) -> i32 {
+    println!("Value if x is {}", x);
+    return x + 1;
+    // x + 1 is also valid, notice the missing `;`, as this should be an
+    // expression rather than a statement;
 }
