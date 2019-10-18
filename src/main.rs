@@ -13,6 +13,12 @@ fn main() {
     // with the ending `;` this turns to be a statement which cannot be
     // assigned to a variable
     println!("y is {}", y);
+
+    // can return multiple values
+    let s1 = String::from("Hello");
+    let (s2, len) = calculate_length(s1);
+    println!("The length of '{}' is {}", s2, len);
+    // refer ownership to understand why we cannot use s1 after calling the fn
 }
 
 fn another_function(x: i32) -> i32 {
@@ -20,4 +26,9 @@ fn another_function(x: i32) -> i32 {
     return x + 1;
     // x + 1 is also valid, notice the missing `;`, as this should be an
     // expression rather than a statement;
+}
+
+fn calculate_length(s: String) -> (String, usize) {
+    let len = s.len();
+    (s, len)
 }
