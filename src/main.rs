@@ -49,7 +49,7 @@ fn main() {
 
     //println!("s1 {}",s1);
 
-    // this is like a shallow copy, but as the variable is invalidated, it is
+    // this is like a shallow copy, but the variable is invalidated, it is
     // called *move*.
 
     // Rust never created *deep copy* by default.
