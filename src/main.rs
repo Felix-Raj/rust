@@ -13,7 +13,9 @@ fn main() {
        let mut s = String::from("Hello");  // variable gets a
        // space in heap rather than on stack as it can grow/shrink.
        s.push_str(", World!");
-       println!("{}",s)
+       println!("{}",s);
+       let a = "felix";  // str - string literal
+       let mut a = "felix";  // str - string literal
    }  // rust calls the drop function for the variable at this point, the
     // function implements how to return the memory back to OS.
 
