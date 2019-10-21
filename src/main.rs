@@ -1,73 +1,79 @@
+struct User {
+    username: String,
+    email: String,
+    sign_in_count: u64,
+    active: bool,
+}
+/*
+struct WithRefs {
+    username: &str,  // but requires lifetime to be specified
+}
+*/
+fn build_user(email:String, username:String) -> User {
+    User{
+        username,
+        email,
+        sign_in_count: 1,
+        active: true,
+    }
+}
+
+// tuple structs
+// no names associated with fields
+struct Point(i32, i32, i32);
+
+// unit structs
+// no fields
+// useful - want to implement some trait, but don't have data that you want
+//   to store in the type itself
+
 fn main() {
-    // slice does not have ownership
-    // refer contiguous sequence of elements in a collection
+    // create instance of struct
+    let user1 = User{
+        username: "Felix Raj".to_string(),
+        email: String::from("some@one.com"),
+        sign_in_count: 0,
+        active: true,
+    };
 
-    let mut s = String::from("Hello, World");
-    let word = first_word_1(&s);
-    s.clear();  // this empties the string;
-    println!("the first word {}", word);
-    // this value of word have no relation to s
+    // dot notation to read values
+    println!("User name is {}", user1.username);
 
-    s = String::from("Hello, World");
-    let word = first_word_with_slice(&s);
-    // s.clear();  // error
-    println!("The first word {}", word);
-    // ensures that the word is useless!! [ Kind of ]
+    let mut user2 = User{
+        username: String::from("Another User"),
+        email: "another@some.com".to_string(),
+        sign_in_count: 24,
+        active: false,
+    };
+    // dot notation to write, but should be mutable
+    user2.email = String::from("new@email.com");
 
-    // word is still valid, but in reference to s it is not valid
-    // using word along with s won't be a good idea
+    let user3 = build_user(String::from("Some@One.com"),
+                       "SomeOne".to_string());
 
-    let s = String::from("Hello, World");
-    let hello = &s[0..5];  // of type &str
-    let world = &s[7..12];
-    println!("{} {}", hello, world);
+    // create instance with struct update syntax
+    let user4 = User{
+        email: "New@Email.com".to_string(),
+        username: "NewUser".to_string(),
+        .. user3
+    };
 
-    let slice = &s[..4];
-    let slice = &s[4..];
-    let slice = &s[..];  // equivalent to &s[0..s.len()]
+    let point1 = Point(1, 3, 4);
+    println!("Point 1 x {}", point1.0);
 
-    let s = String::from("Hello, World");
-    let word = first_word_with_slice_with_better_fun_sig(&s[..]);
-    let string_literal = "Hello, World";
-    let word = first_word_with_slice_with_better_fun_sig(
-        &string_literal
-    );
-
-    // slices can be applied to list...
-    let a = [1, 2, 3, 4];
-    let slice = &a[1..3];
-    // a[1..3] does not work
-}
-
-fn first_word_1(s: &String) -> usize {
-    // take a string return the last index of the word
-    let bytes=s.as_bytes();
-    for (i, &item) in bytes.iter().enumerate() {
-        if item == b' ' {
-            return i;
+    #[derive(Debug)]  // help to use specifier `:?` in print. Try w/o this
+    struct Rectangle {
+        width: u32,
+        height: u32,
+    }
+    impl Rectangle{  // implementation block
+        fn area(&self) -> u32 {
+            self.width * self.height
         }
     }
-    s.len()
-}
+    let rect1 = Rectangle {width:30, height:90};
+    println!("rect1 is {:?}", rect1);  // Debug o/p format - :?
+    println!("rect1 is {:#?}", rect1);  // Helps with complex structs
+    println!("Area of rect1 {}", rect1.area());
 
-fn first_word_with_slice(s: &String) -> &str {
-    let bytes=s.as_bytes();
-    for (i, &item) in bytes.iter().enumerate()  {
-        if item == b' ' {
-            return &s[0..i];
-        }
-    }
-    &s[..]
-}
-
-fn first_word_with_slice_with_better_fun_sig(s: &str) -> &str {
-    // the logic remains the same
-    // can be called as first_...fun_sig(&st[..]) if st is a string literal
-    let bytes=s.as_bytes();
-    for (i, &item) in bytes.iter().enumerate()  {
-        if item == b' ' {
-            return &s[0..i];
-        }
-    }
-    &s[..]
 }
