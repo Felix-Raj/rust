@@ -70,10 +70,28 @@ fn main() {
         fn area(&self) -> u32 {
             self.width * self.height
         }
+        fn can_hold(&self, other: &Rectangle) -> bool {
+            self.width > other.width && self.height > other.height
+        }
+        // *associated functions* - don't take self a parameter
+        // associated with struct, they are functions not methods as they
+        // don't have an instance of struct to work with
+        fn square(size: u32) -> Rectangle {
+            Rectangle { width:size, height:size }
+        }
+    }
+    impl Rectangle {
+        fn perimeter(&self) -> u32 {
+            // this is also fine, can have multiple impl blocks
+            self.width + self.height
+        }
     }
     let rect1 = Rectangle {width:30, height:90};
+    let rect2 = Rectangle {width: 10, height: 20};
+    let sq3 = Rectangle::square(34);
     println!("rect1 is {:?}", rect1);  // Debug o/p format - :?
     println!("rect1 is {:#?}", rect1);  // Helps with complex structs
     println!("Area of rect1 {}", rect1.area());
-
+    println!("rect1 can hold rect2 {}", rect1.can_hold(&rect2));
+    println!("Square {:#?}", sq3);
 }
