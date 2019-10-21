@@ -6,6 +6,8 @@ fn main() {
     println!("The length of '{}' is {}.", s1, len);
 
     let mut s = String::from("Hello");
+    // & allows to refer some value w/o taking ownership
+    change(&s1);
     change_mut(&mut s);
     // cannot call change_mut(&mut s1) as s1 is immutable.
     // Variable should be mutable, reference should be mutable.
@@ -44,6 +46,8 @@ fn main() {
 
     let r3 = &mut s; // no problem
     println!("{}", r3);
+    // println!("{}", r1);  // won't compile as a immutable borrow used while
+    // there is a mutable borrow in same scope.
 
     // Dangling References
     // let ref_to_nothing = dangle();
@@ -60,6 +64,7 @@ fn main() {
 
 fn calculate_length(s: &String) -> usize {
     // refer the similar fun in functions
+    // having reference as function argument is called *borrowing*
 
     // s gets reference to the string being passed ( that contain the pointer
     // to the mmr location containing the data, len of str, capacity of str).
@@ -76,6 +81,7 @@ fn change_mut(some_string: &mut String) {
     // here the reference is mutable as stated in the argument.
     some_string.push_str(", World");
 }
+
 
 fn dangle() -> &String {
     let s = String::from("Hello");
