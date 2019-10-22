@@ -1,97 +1,102 @@
-struct User {
-    username: String,
-    email: String,
-    sign_in_count: u64,
-    active: bool,
-}
-/*
-struct WithRefs {
-    username: &str,  // but requires lifetime to be specified
-}
-*/
-fn build_user(email:String, username:String) -> User {
-    User{
-        username,
-        email,
-        sign_in_count: 1,
-        active: true,
-    }
-}
-
-// tuple structs
-// no names associated with fields
-struct Point(i32, i32, i32);
-
-// unit structs
-// no fields
-// useful - want to implement some trait, but don't have data that you want
-//   to store in the type itself
-
 fn main() {
-    // create instance of struct
-    let user1 = User{
-        username: "Felix Raj".to_string(),
-        email: String::from("some@one.com"),
-        sign_in_count: 0,
-        active: true,
+    // types of IPAddrs
+    enum IpAddKind {
+        V4,  // CamelCase
+        V6,
     };
 
-    // dot notation to read values
-    println!("User name is {}", user1.username);
+    // create instances
+    let four = IpAddKind::V4;
+    let six = IpAddKind::V6;
 
-    let mut user2 = User{
-        username: String::from("Another User"),
-        email: "another@some.com".to_string(),
-        sign_in_count: 24,
-        active: false,
+    // can thus create some generic fun ( my terminology )
+    fn route(ip_kind: IpAddKind) -> bool {
+        // ip_kind can be V4 or V6
+        true
+    }
+    route(four);
+
+    // using as option
+    struct IpAddr {
+        kind: IpAddKind,
+        address: String,
+    }
+    let ip1 = IpAddr{
+        kind: IpAddKind::V4,
+        address: "194.4.2.59".to_string(),
     };
-    // dot notation to write, but should be mutable
-    user2.email = String::from("new@email.com");
 
-    let user3 = build_user(String::from("Some@One.com"),
-                       "SomeOne".to_string());
+    // more concise method would be, to have data inside enum variants
+    enum IpAddr02 {
+        V4(String),
+        V6(String),
+    }
+    let ip2 = IpAddr02::V4(String::from("143.23.53.22"));
 
-    // create instance with struct update syntax
-    let user4 = User{
-        email: "New@Email.com".to_string(),
-        username: "NewUser".to_string(),
-        .. user3
+    // each variant can have different types and amount of associated data
+    enum IpAddr03 {
+        V4(u8, u8, u8, u8),
+        V6(String),
+    }
+    let ip3 = IpAddr03::V4(198, 198, 34, 51);
+    let ip4 = IpAddr03::V6("::1".to_string());
+
+    // how does the standard library does this
+    struct Ip4Addr {
+        // some code
     };
+    struct IP6Adr {
+        // some code
+    };
+    enum IpAddr04 {
+        V4(Ip4Addr),
+        V6(IP6Adr),
+    }
 
-    let point1 = Point(1, 3, 4);
-    println!("Point 1 x {}", point1.0);
+    enum Message {
+        Quit,
+        Move {x: i32, y: i32},
+        Write(String),
+        ChangeColor(i32, i32, i32),
+    };
+    // is equivalent to creating separate structs for each of the variants
+    struct QuitMessage; // unit struct
+    struct MoveMessage {
+        x: i32, y: i32
+    }
+    struct WriteMessage(String);  // tuple struct
+    struct ChangeColorMessage(i32, i32, i32); // tuple struct
+    // but then we cannot define a function that takes any of this message type
 
-    #[derive(Debug)]  // help to use specifier `:?` in print. Try w/o this
-    struct Rectangle {
-        width: u32,
-        height: u32,
-    }
-    impl Rectangle{  // implementation block
-        fn area(&self) -> u32 {
-            self.width * self.height
-        }
-        fn can_hold(&self, other: &Rectangle) -> bool {
-            self.width > other.width && self.height > other.height
-        }
-        // *associated functions* - don't take self a parameter
-        // associated with struct, they are functions not methods as they
-        // don't have an instance of struct to work with
-        fn square(size: u32) -> Rectangle {
-            Rectangle { width:size, height:size }
+    // enums can also have methods
+    impl Message {
+        fn call(&self) {
+
         }
     }
-    impl Rectangle {
-        fn perimeter(&self) -> u32 {
-            // this is also fine, can have multiple impl blocks
-            self.width + self.height
-        }
-    }
-    let rect1 = Rectangle {width:30, height:90};
-    let rect2 = Rectangle {width: 10, height: 20};
-    let sq3 = Rectangle::square(34);
-    println!("rect1 is {:?}", rect1);  // Debug o/p format - :?
-    println!("rect1 is {:#?}", rect1);  // Helps with complex structs
-    println!("Area of rect1 {}", rect1.area());
-    println!("rect1 can hold rect2 {}", rect1.can_hold(&rect2));
-    println!("Square {:#?}", sq3);
+    let m1 = Message::Write("Something".to_string());
+    m1.call();
+
+    // Rust does not as such have *Nulls*
+    // the standard Option enum help to encode the concept of Null
+    // Option as defined in standard library is
+    /*enum Option<T> {
+        Some(T),
+        None,
+    }*/
+    // the variants of the Option is available w/o explicitly including it, also
+    // the Option enum is also included
+    let some_number = Some(5);
+    let some_string = Some("a String");
+    let some_null: Option<i32> = None;  // *should* specify the type also, if using None
+
+    // if a value may become null, use Option<T>::None for it,
+    // we cannot directly use this value, as Option is different from the type
+    // for example
+    let x: i8 = 5;
+    let y: Option<i8> = None;
+    // let sum = x+y // will fail
+    // we have to convert Option<T> to T, we will require code that will handle each
+    //    variant. Some code will run only when we have Some variant, some will run if
+    //    we have None value
 }
