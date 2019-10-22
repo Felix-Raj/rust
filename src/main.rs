@@ -99,4 +99,44 @@ fn main() {
     // we have to convert Option<T> to T, we will require code that will handle each
     //    variant. Some code will run only when we have Some variant, some will run if
     //    we have None value
+
+    // match
+    // the first match is used
+    // match arms can bind to the parts of values that match the patterns,
+    //      thus we can extract data out of enum variants
+    #[derive(Debug)]
+    enum UsState {
+        Alabama,
+        Alaska,
+    }
+    enum Coin {
+        Penny, Nickel, Dime, Quarter(UsState),
+    }
+    fn values_in_cents(coin: Coin) -> i8 {
+        match coin {
+            Coin::Penny => 1,
+            Coin::Nickel => 5,
+            Coin::Dime => 10,
+            Coin::Quarter(state) => {
+                // match arm can have multiple line
+                eprintln!("State quarter from {:?}", state);
+                25
+            },
+        }
+    }
+    values_in_cents(Coin::Quarter(UsState::Alabama));
+
+    // using match with option<T> for handling Some and None
+    fn plus_one(x: Option<i32>) -> Option<i32> {
+        match x {
+            None => None,
+            Some(i) => Some(i+1),
+            // arms should be exhaustive, it should cover all variants of the
+            //      enum, if any is left out, it's an error, try commenting the None
+            //      arm
+        }
+    }
+    let x = Some(4);
+    let y = plus_one(x);
+    let none = plus_one(None);
 }
