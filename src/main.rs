@@ -133,10 +133,34 @@ fn main() {
             Some(i) => Some(i+1),
             // arms should be exhaustive, it should cover all variants of the
             //      enum, if any is left out, it's an error, try commenting the None
-            //      arm
+            //      arm, we can skip values using *_*
         }
     }
     let x = Some(4);
     let y = plus_one(x);
     let none = plus_one(None);
+
+    let some_value = 0u8;
+    match some_value {
+        1 => println!("One"),
+        5 => println!("Five"),
+        _ => (),  // skip others
+    }
+
+    // if let
+    // in place of match if only one arms as used
+    // can use if the code is more verbose to write in *match*
+    let coin = Some(Coin::Penny);
+    let mut count = 0;
+    match conin {
+        Coin::Quarter(state) => println!("Quarter of state {}", state),
+        _ => count+=1,
+    }
+    // can be changed to
+    if let Coin::Quarter(state) = coin {
+        println!("Quarter of state {}", state);
+    } else {
+        // else is optional
+        count += 1;
+    }  // one more else is not allowed
 }
