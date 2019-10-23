@@ -1,3 +1,5 @@
+use std::intrinsics::prefetch_read_instruction;
+
 fn main() {
     // types of IPAddrs
     enum IpAddKind {
@@ -163,4 +165,5 @@ fn main() {
         // else is optional
         count += 1;
     }  // one more else is not allowed
+    println!("Count {}", count);
 }
