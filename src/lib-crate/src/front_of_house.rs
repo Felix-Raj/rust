@@ -20,6 +20,7 @@ Path can be
 
      the identifiers in the path are separated using `::`
 */
+pub mod customer;
 pub mod front_of_house {
     // can also hold definition of enums, structs,...
     pub mod hosting {  /* making a module public will not make content public, but only
