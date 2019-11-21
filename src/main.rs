@@ -1,41 +1,21 @@
-use std::io;
-use rand::Rng;
-use std::cmp::Ordering;
+// https://doc.rust-lang.org/book/ch09-00-error-handling.html
+use std::fs::File;
 
 fn main() {
-    println!("Guess the number");
-
-    let secret_number = rand::thread_rng().gen_range(1, 101);
-    println!("The secret number is {}", secret_number);
-
-    loop {
-        println!("Input your guess");
-        let mut guess = String::new();
-        io::stdin().read_line(&mut guess)
-            .expect("Failed to read line");
-        // references are immutable by default, here we need a mutable reference,
-        // so use `&mut guess` rather than `&guess`
-        // read_line also return a result of type io::Result ( There is a generic
-        // Result as well as specific versions for submodules as in io::Result )
-        // Result types are enumerators ( enums ). The variants are Ok, Err
-
-        //let guess: u32 = guess.trim().parse()
-        //    .expect("Enter a number!!");
-        let guess:u32 = match guess.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue,
-        };
-
-        println!("You guessed: {}", guess);
-
-        match guess.cmp(&secret_number) {
-            // Ordering is another enum, like Result
-            Ordering::Less => println!("Too small!!"),
-            Ordering::Equal => {
-                println!("You win!!");
-                break;
-            },
-            Ordering::Greater => println!("Too big!!"),
-        }
-    }
+    /*
+    recoverable and unrecoverable errors
+    use Result<T, E> for recoverable and panic! for unrecoverable
+    unwinding - rust walks back up and cleans the stack from each and
+        every functions it encounters, but this is slow. Can opt for 
+        immediate abort adding
+        panic='abort'
+        in appropriate [profile] section in Cargo.toml
+        eg:-
+        [profile.release]
+        panic = 'abort'
+    If not unwinding, cleaning for memory location is handled by OS
+    */
+    panic!("Crash!!!");
+    let f = File::open("Hello.txt");
+    // https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#recoverable-errors-with-result
 }
