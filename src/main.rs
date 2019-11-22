@@ -1,69 +1,114 @@
 #[allow(unused_variables)]
-// https://doc.rust-lang.org/book/ch09-00-error-handling.html
-use std::fs::File;
-use std::io::{self, ErrorKind, Read};
 
-fn main() {
-    /*
-    recoverable and unrecoverable errors
-    use Result<T, E> for recoverable and panic! for unrecoverable
-    unwinding - rust walks back up and cleans the stack from each and
-        every functions it encounters, but this is slow. Can opt for 
-        immediate abort adding
-        panic='abort'
-        in appropriate [profile] section in Cargo.toml
-        eg:-
-        [profile.release]
-        panic = 'abort'
-    If not unwinding, cleaning for memory location is handled by OS
-    */
-    
-    let f = File::open("Hello.txt");
-    // return type of File::open is a Result<T,E> on sucess it is Ok
-    // and on error it is Err
-    let f = match f {
-        Ok(file) => file,
-        Err(error) => match error.kind() {
-            ErrorKind::NotFound => match File::create("Hello.txt") {
-                Ok(result) => result,
-                Err(err) => panic!("Problem creating file {:?}", err),
-            },
-            other_error => panic!("Problem opening file {:?}", other_error),
-        },
-    };
+use core::fmt::Debug;
 
-    // unwrap
-    // unwrap return the inner value is Result is Ok, else calls panic!
-    let f = File::open("Hello.txt").unwrap();  // change file name and run
-    // expect
-    // expect does the same, but allows to specify the error message
-    let f = File::open("Hello.txt").expect("File 404!");  // the error message
-    // will start with the message tha we specified
-
-    let uname = read_from_file().unwrap();
-    println!("uname {}", uname);
-
-    println!("uname {}",read_from_file_2().unwrap() );
-}
-
-fn read_from_file() -> Result<String, io::Error> {
-    // propogating error
-    let mut f = File::open("Hello.txt").unwrap();
-    let mut s = String::new();
-    // code that call this will get a Ok is success, else Err - as this are Result
-    // the signature is fine
-    match f.read_to_string(&mut s) {
-        Ok(_) => Ok(s),
-        Err(r) => Err(r),
+trait Summary {
+    // let user define the implementation
+    fn summarize_author(&self) -> String ;
+    // or can also provide a default implementation
+    fn summarize(&self) -> String {
+        format!("(Read more from {}...)", self.summarize_author())
     }
 }
 
-fn read_from_file_2() -> Result<String, io::Error> {
-    // See the difference b/w using ? and match in the doc ( the same page )
-    let mut f = File::open("Hello.txt").unwrap();
-    let mut s = String::new();
-    f.read_to_string(&mut s)?;
-    Ok(s)
-    // to use `?`, the function that contains it usage ( here read_from_file_2 ) should
-    // return Result<T, E>
+#[derive(Debug)]
+struct NewsArticle {
+    pub headline: String,
+    pub location: String,
+    pub author: String,
+    pub content: String,
+}
+
+impl Summary for NewsArticle {
+    // use default implementation of summarize
+    // but summarize_author need to be implemented
+    fn summarize_author(&self) -> String {
+        "news_article_aggregator".to_string()
+    }
+}
+
+#[derive(Debug)]
+struct Tweet {
+    pub username: String,
+    pub content: String,
+    pub reply: bool,
+    pub retweet: bool,
+}
+
+impl Summary for Tweet {
+
+    fn summarize_author(&self) -> String {
+        // cannnot directly return self.username
+        //      self.username is of String type, 
+        //      trying to return self.username will
+        //      try to change ownership - try to *move*
+        //      see - https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html#return-values-and-scope
+        // so either 
+        // format!("@{}", self.username)
+        // or
+        self.username.clone()  // clone creates a copy
+        // or 
+        // let uname = self.username;
+        // uname.clone()
+    }
+
+    fn summarize(&self) -> String {
+        // cannot call default implementation from overriding implementation
+        format!("{}: @{} ", self.content, self.username)
+    }
+}
+
+fn notify(item: &impl Summary) {
+    // the above function signature is a shorthand see notify2
+    // can be called with any item implementing trait Summary
+    println!("Important... {}", item.summarize());
+}
+
+fn notify2<T: Summary>(item: &T) {
+    /*
+    This form in suitable in certain cases like
+        pub fn notify(item1: impl Summary, item2: impl Summary) {
+    can be written better as
+        pub fn notify<T: Summary>(item1: T, item2: T) {
+    */
+    println!("Important... {}", item.summarize());
+}
+
+/*
+To specify more than one trait, use +
+    notify(item: impl Summerize + Display)
+which is equivalent to 
+    notify<T: Summerize + Display>(item: T)
+*/
+
+fn some_function<T: Summary + Clone, U: Clone + Debug>(t: T, u: U) -> i32 { 90 }
+// can be written using where clause
+fn some_function2<T, U>(t: T, u: U) -> i32 
+    where T: Summary + Clone, 
+          U: Clone + Debug {
+    // function body starts after where clause
+    90
+}
+
+fn main() {
+    /*
+    Trait is similar to Interfaces, with some differences.
+    Types implementing the trait should provide the implementation body for the trait.
+    Either the trait or the type should be local to our crate - orphan rule.
+    */
+    let tweet1 = Tweet {
+        username: "User Name".to_string(),
+        content: "Content".to_string(),
+        reply: false,
+        retweet: true,
+    };
+    notify(&tweet1);
+
+    let newsarticle = NewsArticle {
+        headline: "Headline".to_string(),
+        content: "Content".to_string(),
+        author: "Author".to_string(),
+        location: "Location".to_string(),
+    };
+    notify2(&newsarticle)
 }
