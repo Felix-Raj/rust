@@ -44,12 +44,9 @@ impl Summary for Tweet {
         //      try to change ownership - try to *move*
         //      see - https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html#return-values-and-scope
         // so either 
-        // format!("@{}", self.username)
+        // format!("{}", self.username)
         // or
         self.username.clone()  // clone creates a copy
-        // or 
-        // let uname = self.username;
-        // uname.clone()
     }
 
     fn summarize(&self) -> String {
@@ -88,6 +85,31 @@ fn some_function2<T, U>(t: T, u: U) -> i32
           U: Clone + Debug {
     // function body starts after where clause
     90
+}
+
+// Return type that implements a trait
+fn returns_summarize() -> impl Summary {
+    Tweet {
+        username: "Another User Name".to_string(),
+        content: "Yet another content".to_string(),
+        reply: false,
+        retweet: false,
+    }
+}
+// but the function should have the possibility to return only one type,
+// this is due to some restrictions around the implementation of `impl Trait`
+// so the following will not compile
+fn returns_summarize_2(switch: bool) -> impl Summary {
+    if switch {
+        returns_summarize()
+    } else {
+        NewsArticle {
+            headline: "Headline 2".to_string(),
+            location: "Location Unknown".to_string(),
+            author: "Anonymous".to_string(),
+            content: "Classified".to_string()
+        }
+    }
 }
 
 fn main() {
