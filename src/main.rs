@@ -103,13 +103,46 @@ fn returns_summarize_2(switch: bool) -> impl Summary {
     if switch {
         returns_summarize()
     } else {
-        NewsArticle {
+        returns_summarize()
+        /*NewsArticle {
             headline: "Headline 2".to_string(),
             location: "Location Unknown".to_string(),
             author: "Anonymous".to_string(),
             content: "Classified".to_string()
+        }*/
+    }
+}
+
+// change uncommented to commented and vice-versa in steps
+//fn largest<T>(list: &[T]) -> T {
+//fn largest<T: PartialOrd>(list: &[T]) -> T {
+fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
+    let mut largest = list[0];
+
+    for &item in list.iter(){
+        if item > largest {
+            largest = item;
         }
     }
+
+    largest
+}
+/*
+If we don't want to limit the function to types that implements Copy trait,
+we could specify that T has the trait bound Clone instead of Copy. Then we can
+make Clone of each value in the slice in the function. Bus with large data in heap
+this will make pgm slow.
+Another way is to implement to return an reference to the largest
+*/
+fn largest_2<T: PartialOrd>(list: &[T]) -> &T {
+    // TODO: need to check dereferencing and referencing once more for this
+    let mut largest = &list[0];
+    for item in list.iter() {
+        if *item > *largest {
+            largest = item
+        }
+    }
+    largest
 }
 
 fn main() {
@@ -132,5 +165,13 @@ fn main() {
         author: "Author".to_string(),
         location: "Location".to_string(),
     };
-    notify2(&newsarticle)
+    notify2(&newsarticle);
+
+    let num_list = vec![34, 50, 25, 100, 65];
+    println!("The largest number is {}", largest(&num_list));
+    println!("The largest number is {}", *largest_2(&num_list));
+
+    let char_list = vec!['y', 'm', 'a', 'q'];
+    println!("The largest char is {}", largest(&char_list));
+    println!("The largest char is {}", *largest_2(&char_list));
 }
