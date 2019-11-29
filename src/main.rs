@@ -1,6 +1,7 @@
 #[allow(unused_variables)]
 
 use core::fmt::Debug;
+use std::fmt::Display;
 
 trait Summary {
     // let user define the implementation
@@ -98,7 +99,7 @@ fn returns_summarize() -> impl Summary {
 }
 // but the function should have the possibility to return only one type,
 // this is due to some restrictions around the implementation of `impl Trait`
-// so the following will not compile
+// so the following will not compile, try returning NewsArticle from else arm
 fn returns_summarize_2(switch: bool) -> impl Summary {
     if switch {
         returns_summarize()
@@ -144,6 +145,40 @@ fn largest_2<T: PartialOrd>(list: &[T]) -> &T {
     }
     largest
 }
+
+// Using trait bounds to conditionally implement methods
+struct Pair<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Pair<T> {
+    fn new(x: T, y: T) -> Self {
+        Self {
+            x,
+            y,
+        }
+    }
+}
+
+impl<T: Display + PartialOrd> Pair<T> {
+    fn cmd_display(&self) {
+        if self.x >= self.y {
+            println!("The largest member is x = {}", self.x);
+        } else {
+            println!("The largest member is y = {}", self.y);
+        }
+    }
+}
+
+// implementation of a trait can also follow similar rule
+// impl<T: Display> ToString for T { }
+
+// Traits and trait bounds let us write code that uses generic type parameters
+// to reduce duplication but also specify to the compiler that we want the
+// generic type to have particular behavior. Compiler can check with this
+// information whether the concrete types will behave as expected.
+// Checks that would have otherwise done during run time is moved to compile time
 
 fn main() {
     /*
