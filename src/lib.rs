@@ -4,13 +4,13 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Config {
+    pub fn new(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
-            panic!("not enough arguments")
+            return Err("not enough arguments");
         }
-        Config {
+        Ok(Config {
             filename: args[1].clone(),
             query: args[2].clone(),
-        }
+        })
     }
 }
