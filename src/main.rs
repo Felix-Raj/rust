@@ -11,7 +11,7 @@ fn main() {
     });
 
     println!("In file {}", config.filename);
-    println!("Searching for {}", config.query);
+    println!("Searching for {}\n\n", config.query);
 
     if let Err(e) = rustb::run(config) {
         println!("Application error {}", e);
