@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::{fs, env};
+use std::{env, fs};
 
 pub struct Config {
     pub filename: String,
@@ -30,7 +30,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     };
 
     for line in result {
-        println!("{}",line)
+        println!("{}", line)
     }
 
     Ok(())
@@ -48,8 +48,8 @@ pub fn search_case_sensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str>
     results
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str>{
-    let query =&query.to_lowercase();
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let query = &query.to_lowercase();
     let mut results = Vec::new();
 
     for line in contents.lines() {
@@ -73,7 +73,10 @@ Rust:
 safe, fast, productive.
 Pick three.
 Duct tape";
-        assert_eq!(vec!["safe, fast, productive."], search_case_sensitive(&query, &contents));
+        assert_eq!(
+            vec!["safe, fast, productive."],
+            search_case_sensitive(&query, &contents)
+        );
     }
 
     #[test]
@@ -84,6 +87,9 @@ Rust:
 safe, fast, productive.
 Pick three.
 Trust me.";
-        assert_eq!(vec!["Rust:", "Trust me."], search_case_insensitive(&query, &contents));
+        assert_eq!(
+            vec!["Rust:", "Trust me."],
+            search_case_insensitive(&query, &contents)
+        );
     }
 }
