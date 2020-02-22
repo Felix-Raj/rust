@@ -55,9 +55,20 @@ fn generate_workout(intensity: u32, random_number: u32) {
     }
 }
 
+fn capture_env() {
+    println!("capture env");
+    let x = 23;
+    // functions cannot do this.
+    let equal = |y| y==x;
+    let z = 23;
+    assert!(equal(z))
+}
+
 fn main() {
     let simulated_user_specific_value = 10;
     let simulated_random_number = 7;
 
     generate_workout(simulated_user_specific_value, simulated_random_number);
+    capture_env()
+    // continue from Closures can capture values from their environment in three ways
 }
