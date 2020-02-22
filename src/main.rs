@@ -1,22 +1,25 @@
 use std::thread;
 use std::time::Duration;
 
-fn simulated_expensive_calculation(intensity: u32) -> u32 {
-    println!("calculating slowly...");
-    thread::sleep(Duration::from_secs(2));
-    intensity
-}
 
 fn generate_workout(intensity: u32, random_number: u32) {
-    let expensive_result = simulated_expensive_calculation(intensity);
+    // Types are inferred. Having explicit type annotation is fine. The compiler infers the type
+    // using the first call also, try calling this closure using two different data type, like
+    // expensive_closure(23);
+    // expensive_closure(String::from("hello"));
+    let expensive_closure = |num| {
+        println!("calculating slowly...");
+        thread::sleep(Duration::from_secs(2));
+        num
+    };
     if intensity < 25 {
-        println!("Today {} pushups!", expensive_result);
-        println!("Next do {} situps!", expensive_result);
+        println!("Today {} pushups!", expensive_closure(intensity));
+        println!("Next do {} situps!", expensive_closure(intensity));
     } else {
         if random_number==3 {
             println!("Take a break today, remember to stay hyderated!");
         } else {
-            println!("Today, run for {} minutes!", expensive_result);
+            println!("Today, run for {} minutes!", expensive_closure(intensity));
         }
     }
 }
