@@ -1,12 +1,18 @@
 use std::thread;
 use std::time::Duration;
 
-struct Cacher<T> where T: Fn(u32) -> u32 {
+struct Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
     calculation: T,
     value: Option<u32>,
 }
 
-impl<T> Cacher<T> where T:Fn(u32) -> u32 {
+impl<T> Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
     fn new(calculation: T) -> Cacher<T> {
         Cacher {
             calculation,
@@ -47,10 +53,13 @@ fn generate_workout(intensity: u32, random_number: u32) {
         println!("Today {} pushups!", expensive_result.value(intensity));
         println!("Next do {} situps!", expensive_result.value(intensity));
     } else {
-        if random_number==3 {
+        if random_number == 3 {
             println!("Take a break today, remember to stay hyderated!");
         } else {
-            println!("Today, run for {} minutes!", expensive_result.value(intensity));
+            println!(
+                "Today, run for {} minutes!",
+                expensive_result.value(intensity)
+            );
         }
     }
 }
@@ -59,7 +68,7 @@ fn capture_env() {
     println!("capture env");
     let x = 23;
     // functions cannot do this.
-    let equal = |y| y==x;
+    let equal = |y| y == x;
     let z = 23;
     assert!(equal(z))
 }
