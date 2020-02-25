@@ -73,11 +73,35 @@ fn capture_env() {
     assert!(equal(z))
 }
 
+fn closure_that_moves() {
+    println!("closure using FnOnce");
+    let x = vec![1, 2, 3];
+    let e = move |y| y == x;
+    // uncomment the following line
+    println!("{:?}", x);
+    // try with int, that have Copy Trait implemented, Vec does not have Copy Trait implemented
+    let z = vec![1, 2, 3];
+    assert!(e(z))
+}
+
 fn main() {
     let simulated_user_specific_value = 10;
     let simulated_random_number = 7;
 
     generate_workout(simulated_user_specific_value, simulated_random_number);
-    capture_env()
-    // continue from Closures can capture values from their environment in three ways
+    capture_env();
+    closure_that_moves();
+    // Closures can capture values from their environment in three ways - which maps to 3 ways fn
+    // can take a parameter:
+    // 1. taking ownership
+    // 2. borrowing mutably
+    // 3. borrowing immutably
+    // they are
+    // 1. FnOnce - takes ownership of variables in env, captures it, move to closure when defined.
+    //              can only be called once, as closure cannot take ownership of a variable more
+    //              than once
+    // 2. FnMut - borrows mutably, so can modify
+    // 3. Fn - borrows immutably
+    // the equal closure in capture_env implement Fn, x is  not being modified, so x is borrowed
+    // immutably
 }
