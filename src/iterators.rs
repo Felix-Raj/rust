@@ -81,5 +81,10 @@ pub mod mod_iterator {
             "Sum of some {}",
             x1
         )
+
+        // iterators, although a high-level abstraction, get compiled down to roughly the same
+        // code as if you’d written the lower-level code yourself. Iterators are one of Rust’s
+        // zero-cost abstractions, by which we mean using the abstraction imposes no additional
+        // runtime overhead.
     }
 }
