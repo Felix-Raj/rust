@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::{env, fs};
+use std::{fs, env};
 
 pub struct Config {
     pub filename: String,
@@ -8,13 +8,19 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
+        args.next();  // name of the program
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("query not found"),
+        };
+        let filename = match args.next() {
+            Some(arg)=>arg,
+            None => return Err("file name required"),
+        };
         Ok(Config {
-            filename: args[1].clone(),
-            query: args[2].clone(),
+            filename,
+            query,
             case_sensitive: env::var("CASE_INSENSITIVE").is_err(),
         })
     }
