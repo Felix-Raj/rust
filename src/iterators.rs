@@ -1,5 +1,26 @@
 #![allow(unused_variables)]
 pub mod mod_iterator {
+    struct Counter {
+        count: i32,
+    }
+    impl Counter {
+        fn new() -> Counter {
+            Counter { count: -1 }
+        }
+    }
+
+    impl Iterator for Counter {
+        type Item = i32;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            self.count += 1;
+            if self.count < 6 {
+                Some(self.count)
+            } else {
+                None
+            }
+        }
+    }
     pub fn iterators() {
         // iterators are lazy
         let v1 = vec![1, 2, 3];
@@ -36,8 +57,29 @@ pub mod mod_iterator {
         // collect method can be used to collect the results
         let iter = v1.iter().map(|x| x * x);
         let v2: Vec<_> = iter.collect();
-        println!("v2 {:?}", v2)
+        println!("v2 {:?}", v2);
 
-        // NEXT: Using Closures that Capture Their Environment
+        // Closures that capture the environment can also be used
+        let divisible_by = 8;
+        let v1 = vec![1, 4, 8, 12, 16, 20, 24, 28, 32];
+        let v2: Vec<_> = v1.iter().filter(|x| **x % divisible_by == 0).collect();
+        println!("v2 {:?}", v2);
+
+        // Creating an iterator, by implementing the Iterator trait
+        let c = Counter::new();
+        for x in c {
+            println!("Next {}", x)
+        }
+
+        // A complex one.
+        let x1: i32 = Counter::new()
+            .zip(Counter::new().skip(1))
+            .map(|(a, b)| a * b)
+            .filter(|x| x % 3 == 0)
+            .sum();
+        println!(
+            "Sum of some {}",
+            x1
+        )
     }
 }
