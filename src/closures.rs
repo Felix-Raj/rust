@@ -1,3 +1,7 @@
+//! # Module Closures
+//!
+//! Contains example of how to use closures.
+
 #![allow(dead_code)]
 pub mod mod_closures {
     use std::thread;
@@ -86,6 +90,7 @@ pub mod mod_closures {
         assert!(e(z))
     }
 
+    /// Document for closure main.
     pub fn closures_main() {
         let simulated_user_specific_value = 10;
         let simulated_random_number = 7;

@@ -21,6 +21,8 @@ pub mod mod_iterator {
             }
         }
     }
+
+    /// Document for iterators.
     pub fn iterators() {
         // iterators are lazy
         let v1 = vec![1, 2, 3];
